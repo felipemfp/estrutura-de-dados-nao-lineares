@@ -89,7 +89,7 @@ public class AVLPrintable extends AVL {
             } else if (n.getKey().getClass() == NotNode.class) {
                 level += "--";
             } else {
-                level += String.format("%02d", (int) this.key(n));
+                level += String.format("%02d (%1d)", (int) this.key(n), n.getFactor());
             }
             level += String.join("", Collections.nCopies((int) Math.ceil(k), "-"));
         }

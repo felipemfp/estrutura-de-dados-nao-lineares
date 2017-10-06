@@ -88,6 +88,27 @@ public class AVL implements IAVL {
     public Node root() {
         return this.root;
     }
+    
+    private void incrementFactor(Node n, boolean inserting) {
+        if (n == null) return;
+        
+        n.setFactor(n.getFactor() + 1);
+        
+        if (inserting && n.getParent() != null && n.getParent().getFactor() != 0) {
+            incrementFactor(n.getParent(), inserting);
+        }
+        
+    }
+    
+    private void decrementFactor(Node n, boolean inserting) {
+        if (n == null) return;
+        
+        n.setFactor(n.getFactor() - 1);
+        
+        if (inserting && n.getParent() != null && n.getParent().getFactor() == 0) {
+            decrementFactor(n.getParent(), inserting);
+        }
+    }
 
     @Override
     public Node parent(Node n) {
@@ -175,8 +196,10 @@ public class AVL implements IAVL {
             Node n = new Node(k, o, p);
             if (this.comparator.compare(this.key(p), k) > 0) {
                 p.setLeftChild(n);
+                incrementFactor(p, true);
             } else {
                 p.setRightChild(n);
+                decrementFactor(p, true);
             }
             this.size++;
         }
@@ -212,8 +235,10 @@ public class AVL implements IAVL {
                 m.setParent(this.parent(n));
                 if (this.leftChild(n.getParent()) == n) {
                     n.getParent().setLeftChild(m);
+                    decrementFactor(n.getParent(), false);
                 } else {
                     n.getParent().setRightChild(m);
+                    incrementFactor(n.getParent(), false);
                 }
                 n.clear();
                 this.size--;
@@ -221,8 +246,10 @@ public class AVL implements IAVL {
         } else {
             if (this.leftChild(n.getParent()) == n) {
                 n.getParent().setLeftChild(null);
+                decrementFactor(n.getParent(), false);
             } else {
                 n.getParent().setRightChild(null);
+                incrementFactor(n.getParent(), false);
             }
             n.clear();
             this.size--;
