@@ -5,6 +5,7 @@
  */
 package myavl;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -16,10 +17,12 @@ public class AVL implements IAVL {
 
     private int size;
     private Node root;
+    private Comparator comparator;
 
-    public AVL(Object k, Object o) {
+    public AVL(Object k, Object o, Comparator c) {
         size = 1;
         root = new Node(k, o);
+        comparator = c;
     }
 
     @Override
@@ -156,9 +159,9 @@ public class AVL implements IAVL {
         if (this.isExternal(n)) {
             return n;
         }
-        if ((int) this.key(n) > (int) k && this.hasLeftChild(n)) {
+        if (this.comparator.compare(this.key(n), k) > 0 && this.hasLeftChild(n)) {
             return find(k, this.leftChild(n));
-        } else if ((int) this.key(n) < (int) k && this.hasRightChild(n)) {
+        } else if (this.comparator.compare(this.key(n), k) < 0 && this.hasRightChild(n)) {
             return find(k, this.rightChild(n));
         }
         return n;
@@ -168,9 +171,9 @@ public class AVL implements IAVL {
     public void insert(Object k, Object o) {
         Node p = this.find(k);
 
-        if ((int) this.key(p) != (int) k) {
+        if (this.comparator.compare(this.key(p), k) != 0) {
             Node n = new Node(k, o, p);
-            if ((int) this.key(p) > (int) k) {
+            if (this.comparator.compare(this.key(p), k) > 0) {
                 p.setLeftChild(n);
             } else {
                 p.setRightChild(n);
@@ -184,7 +187,7 @@ public class AVL implements IAVL {
     public Object remove(Object k) throws InvalidKeyException {
         Node n = this.find(k);
 
-        if ((int) this.key(n) != (int) k) {
+        if (this.comparator.compare(this.key(n), k) != 0) {
             throw new InvalidKeyException();
         }
 

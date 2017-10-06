@@ -15,7 +15,7 @@ public class MyAVL {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws InvalidKeyException {
-        AVLPrintable avl = new AVLPrintable(7, "Felipe Pontes");
+        AVLPrintable avl = new AVLPrintable(7, "Felipe Pontes", new IntegerComparator());
         System.out.println(avl);
         
         addAndPrint(avl, 5, "Karen Cristina");

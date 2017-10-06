@@ -6,6 +6,7 @@
 package myavl;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,8 +18,8 @@ import java.util.Vector;
  */
 public class AVLPrintable extends AVL {
 
-    public AVLPrintable(Object k, Object o) {
-        super(k, o);
+    public AVLPrintable(Object k, Object o, Comparator c) {
+        super(k, o, c);
     }
 
     @Override
