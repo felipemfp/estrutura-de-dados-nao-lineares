@@ -52,8 +52,8 @@ public class MyAVL {
     }
     
     private static void addAndPrint(AVLPrintable avl, Object k, Object o) {
+        System.out.println(o + " [" +k+ "] será adicionado.");
         avl.insert(k, o);
-        System.out.println(o + " [" +k+ "] foi adicionado.");
         System.out.println(avl);
 }
 

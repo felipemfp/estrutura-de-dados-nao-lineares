@@ -178,6 +178,7 @@ public class AVL implements IAVL {
             } else {
                 p.setRightChild(n);
             }
+            updateFactor(p, n.getKey(), true);
             this.size++;
         }
 
@@ -215,6 +216,7 @@ public class AVL implements IAVL {
                 } else {
                     n.getParent().setRightChild(m);
                 }
+                updateFactor(n.getParent(), n.getKey(), false);
                 n.clear();
                 this.size--;
             }
@@ -224,11 +226,42 @@ public class AVL implements IAVL {
             } else {
                 n.getParent().setRightChild(null);
             }
+            updateFactor(n.getParent(), n.getKey(), false);
             n.clear();
             this.size--;
         }
 
         return o;
+    }
+
+    private void balance(Node n) {
+        if (Math.abs(n.getFactor()) > 1) {
+            rotate(n);
+        }
+    }
+    
+    private void updateFactor(Node n, Object key, boolean inserting) {
+        if (inserting) {
+            if (this.comparator.compare(n.getKey(), key) < 0) {
+                n.setFactor(n.getFactor() - 1);
+            } else {
+                n.setFactor(n.getFactor() + 1);
+            }
+            
+            balance(n);
+            
+            if (n.getFactor() != 0 && !this.isRoot(n))
+                updateFactor(n.getParent(), key, inserting);
+        } else {
+            if (this.comparator.compare(n.getKey(), key) < 0) {
+                n.setFactor(n.getFactor() + 1);
+            } else {
+                n.setFactor(n.getFactor() - 1);
+            }
+
+            if (n.getFactor() == 0 && !this.isRoot(n))
+                updateFactor(n.getParent(), key, inserting);
+        }
     }
 
     public Iterator traverse() {
@@ -249,5 +282,93 @@ public class AVL implements IAVL {
         if (this.hasRightChild(n)) {
             traverse(this.rightChild(n), v);
         }
+    }
+
+    private void rotateToLeft(Node n) {
+        Node rightTree = n.getRightChild();
+        
+        n.setRightChild(rightTree.getLeftChild());
+        if (rightTree.getLeftChild() != null) rightTree.getLeftChild().setParent(n);
+        
+        rightTree.setLeftChild(n);
+        rightTree.setParent(n.getParent());
+        if (n.getParent() != null && n.getParent().getLeftChild() == n) {
+            n.getParent().setLeftChild(rightTree);
+        } else if (n.getParent() != null) {
+            n.getParent().setRightChild(rightTree);
+        }
+        n.setParent(rightTree);
+        
+        if (rightTree.getParent() == null) this.root = rightTree;
+    }
+
+    private void rotateToRight(Node n) {
+        Node leftTree = n.getLeftChild();
+
+        n.setLeftChild(leftTree.getRightChild());
+        if (leftTree.getRightChild() != null) leftTree.getRightChild().setParent(n);
+        
+        leftTree.setRightChild(n);
+        leftTree.setParent(n.getParent());
+        if (n.getParent() != null && n.getParent().getLeftChild() == n) {
+            n.getParent().setLeftChild(leftTree);
+        } else if (n.getParent() != null) {
+            n.getParent().setRightChild(leftTree);
+        }
+        n.setParent(leftTree);
+        
+        if (leftTree.getParent() == null) this.root = leftTree;
+    }
+
+    private void rotateToLeftPlus(Node n) {
+        rotateToRight(n.getRightChild());
+        rotateToLeft(n);
+    }
+
+    private void rotateToRightPlus(Node n) {
+        rotateToLeft(n.getLeftChild());
+        rotateToRight(n);
+    }
+
+    private Node rotate(Node n) {
+        Node r = n;
+        if (n.getFactor() == 2) { // direita
+            if (n.getLeftChild().getFactor() >= 0) { // simples
+                r = n.getLeftChild();
+                n.setFactor(0);
+                n.getLeftChild().setFactor(0);
+                this.rotateToRight(n);
+            } else { // dupla
+                r = n.getLeftChild().getRightChild();
+                if (n.getLeftChild().getRightChild().getFactor() > 0) {
+                    n.setFactor(-1);
+                    n.getLeftChild().setFactor(0);
+                } else {
+                    n.setFactor(0);
+                    n.getLeftChild().setFactor(1);                    
+                }
+                n.getLeftChild().getRightChild().setFactor(0);
+                this.rotateToRightPlus(n);
+            }
+        } else if (n.getFactor() == -2) { // esquerda
+            if (n.getRightChild().getFactor() <= 0) { // simples
+                r = n.getRightChild();
+                n.setFactor(0);
+                n.getRightChild().setFactor(0);
+                this.rotateToLeft(n);
+            } else { // dupla
+                r = n.getRightChild().getLeftChild();
+                if (n.getRightChild().getLeftChild().getFactor() > 0) {
+                    n.setFactor(-1);
+                    n.getRightChild().setFactor(0);
+                } else {
+                    n.setFactor(0);
+                    n.getRightChild().setFactor(1);                    
+                }
+                n.getRightChild().getLeftChild().setFactor(0);
+                this.rotateToLeftPlus(n);
+            }
+        }
+        return r;
     }
 }

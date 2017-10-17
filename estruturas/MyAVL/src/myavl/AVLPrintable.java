@@ -24,10 +24,6 @@ public class AVLPrintable extends AVL {
 
     @Override
     public String toString() {
-        return this.toString(false);
-    }
-
-    public String toString(boolean original) {
         int height = this.height() + 1;
         int max = (int) Math.pow(2, height);
 
@@ -89,7 +85,7 @@ public class AVLPrintable extends AVL {
             } else if (n.getKey().getClass() == NotNode.class) {
                 level += "--";
             } else {
-                level += String.format("%02d", (int) this.key(n));
+                level += String.format("%+1d", (int) n.getFactor());
             }
             level += String.join("", Collections.nCopies((int) Math.ceil(k), "-"));
         }
