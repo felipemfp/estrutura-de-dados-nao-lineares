@@ -72,20 +72,20 @@ public class AVLPrintable extends AVL {
 
     public String levelToString(Vector v, int l, int max) {
         int c = 0;
-        int q = (max * 4) / v.size();
+        int q = (max * 6) / v.size();
 
         String level = "";
 
         for (int i = 0; i < v.size(); i++) {
-            float k = (q - 2) / 2;
+            float k = (q - 6) / 2;
             level += String.join("", Collections.nCopies((int) Math.floor(k), "-"));
             Node n = (Node) v.get(i);
             if (n == null) {
-                level += "[]";
+                level += "--[]--";
             } else if (n.getKey().getClass() == NotNode.class) {
-                level += "--";
+                level += "------";
             } else {
-                level += String.format("%+1d", (int) n.getFactor());
+                level += String.format("%2d(%+1d)", (int)n.getKey(), (int) n.getFactor());
             }
             level += String.join("", Collections.nCopies((int) Math.ceil(k), "-"));
         }
